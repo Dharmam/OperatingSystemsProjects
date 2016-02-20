@@ -26,7 +26,7 @@ public class BatchProcessor {
 			throw new ProcessException("Missing ID in CMD Command");
 		}
 		System.out.println("ID: " + id);
-		
+
 		String path = elem.getAttribute("path");
 		if (path == null || path.isEmpty()) {
 			throw new ProcessException("Missing PATH in CMD Command");
@@ -58,33 +58,38 @@ public class BatchProcessor {
 			System.out.println("outID: " + outID);
 		}
 	}
+
+
 	private static void parseCommand(Element elem) throws ProcessException
-	{String cmdName = elem.getNodeName();
-	
-	if (cmdName == null) {
-		throw new ProcessException("unable to parse command from " + elem.getTextContent());
+	{
+		String cmdName = elem.getNodeName();
+
+		if (cmdName == null) {
+			throw new ProcessException("unable to parse command from " + elem.getTextContent());
+		}
+		else if ("wd".equalsIgnoreCase(cmdName)) {
+			System.out.println("Parsing wd");
+			Command cmd = WDCommand.parse(elem);
+		}
+		else if ("file".equalsIgnoreCase(cmdName)) {
+			System.out.println("Parsing file");
+			Command cmd = FileCommand.parse(elem);
+		}
+		else if ("cmd".equalsIgnoreCase(cmdName)) {
+			System.out.println("Parsing cmd");
+			Command cmd = CmdCommand.parse(elem);
+			parseCmd(elem); // Example of parsing a cmd element
+		}
+		else if ("pipe".equalsIgnoreCase(cmdName)) {
+			System.out.println("Parsing pipe");
+			Command cmd = PipeCommand.parse(elem);
+		}
+		else {
+			throw new ProcessException("Unknown command " + cmdName + " from: " + elem.getBaseURI());
+		}
 	}
-	else if ("wd".equalsIgnoreCase(cmdName)) {
-		System.out.println("Parsing wd");
-		Command cmd = WDCommand.parse(elem);
-	}
-	else if ("file".equalsIgnoreCase(cmdName)) {
-		System.out.println("Parsing file");
-		//Command cmd = FileCommand.parse(elem);
-	}
-	else if ("cmd".equalsIgnoreCase(cmdName)) {
-		System.out.println("Parsing cmd");
-		//Command cmd = CmdCommand.parse(elem);
-		parseCmd(elem); // Example of parsing a cmd element
-	}
-	else if ("pipe".equalsIgnoreCase(cmdName)) {
-		System.out.println("Parsing pipe");
-		//Command cmd = PipeCommand.parse(elem);
-	}
-	else {
-		throw new ProcessException("Unknown command " + cmdName + " from: " + elem.getBaseURI());
-	}
-	}
+
+
 	public static void main(String[] args) {
 		// Main class of batch processor.
 		try {
@@ -97,7 +102,7 @@ public class BatchProcessor {
 			}
 			System.out.println("Opening " + filename);
 			File f = new File(filename);
-			
+
 			FileInputStream fis = new FileInputStream(f);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
