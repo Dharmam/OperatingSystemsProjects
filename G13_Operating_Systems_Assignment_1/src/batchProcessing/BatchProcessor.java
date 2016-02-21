@@ -19,15 +19,17 @@ public class BatchProcessor {
 	 * An example of parsing a CMD element 
 	 * THIS LOGIC BELONGS IN INDIVIDUAL Command subclasses
 	 */
-	public static void parseCmd(Element elem) throws ProcessException
+	public static void parseCmd(String key) throws ProcessException
 	{
-		String id = elem.getAttribute("id");
+		System.out.println("Parsing Command : -----");
+		CmdCommand elem = (CmdCommand) Batch.lookup.get(key);
+		String id = elem.getId();
 		if (id == null || id.isEmpty()) {
 			throw new ProcessException("Missing ID in CMD Command");
 		}
 		System.out.println("ID: " + id);
 
-		String path = elem.getAttribute("path");
+		String path = Command.getPath();
 		if (path == null || path.isEmpty()) {
 			throw new ProcessException("Missing PATH in CMD Command");
 		}
@@ -36,7 +38,7 @@ public class BatchProcessor {
 		// Arguments must be passed to ProcessBuilder as a list of
 		// individual strings. 
 		List<String> cmdArgs = new ArrayList<String>();
-		String arg = elem.getAttribute("args");
+		String arg = elem.getArgs();
 		if (!(arg == null || arg.isEmpty())) {
 			StringTokenizer st = new StringTokenizer(arg);
 			while (st.hasMoreTokens()) {
@@ -44,23 +46,29 @@ public class BatchProcessor {
 				cmdArgs.add(tok);
 			}
 		}
+		System.out.print("Args are: ");
 		for(String argi: cmdArgs) {
-			System.out.println("Arg " + argi);
+			System.out.print(argi);
+			System.out.print(" ");
 		}
 
-		String inID = elem.getAttribute("in");
+		String inID = elem.getInFile();
 		if (!(inID == null || inID.isEmpty())) {
 			System.out.println("inID: " + inID);
 		}
 
-		String outID = elem.getAttribute("out");
+		String outID = elem.getOutFile();
 		if (!(outID == null || outID.isEmpty())) {
 			System.out.println("outID: " + outID);
 		}
+		
+		System.out.println("Executing CMD .");
+		
+		elem.execute();
 	}
 
 
-	private static void parseCommand(Element elem) throws ProcessException
+	private static  void parseCommand(Element elem) throws ProcessException
 	{
 		String cmdName = elem.getNodeName();
 
@@ -69,27 +77,34 @@ public class BatchProcessor {
 		}
 		else if ("wd".equalsIgnoreCase(cmdName)) {
 			System.out.println("Parsing wd");
-			Command cmd = WDCommand.parse(elem);
+			Command cmd = new WDCommand();
+			cmd.parse(elem);
+			Batch.lookup.put("wd", cmd);
+			
 		}
 		else if ("file".equalsIgnoreCase(cmdName)) {
-			System.out.println("Parsing file");
-			Command cmd = FileCommand.parse(elem);
+			System.out.println("Setting file.");
+			Command cmd = new FileCommand();
+			cmd.parse(elem);
+			Batch.lookup.put(cmd.getId(),cmd);
 		}
 		else if ("cmd".equalsIgnoreCase(cmdName)) {
 			System.out.println("Parsing cmd");
-			Command cmd = CmdCommand.parse(elem);
-			parseCmd(elem); // Example of parsing a cmd element
+			Command cmd = new CmdCommand();
+			cmd.parse(elem); // Example of parsing a cmd element
+			Batch.lookup.put(cmd.getId(), cmd);
+			parseCmd(cmd.getId());
 		}
-		else if ("pipe".equalsIgnoreCase(cmdName)) {
-			System.out.println("Parsing pipe");
-			Command cmd = PipeCommand.parse(elem);
-		}
+		//else if ("pipe".equalsIgnoreCase(cmdName)) {
+			//System.out.println("Parsing pipe");
+			//Command cmd = PipeCommand.parse(elem);
+		//}
 		else {
 			throw new ProcessException("Unknown command " + cmdName + " from: " + elem.getBaseURI());
 		}
 	}
 
-
+	
 	public static void main(String[] args) {
 		// Main class of batch processor.
 		try {
