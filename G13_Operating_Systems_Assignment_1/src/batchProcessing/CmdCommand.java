@@ -30,7 +30,7 @@ public class CmdCommand extends Command {
 			else throw new ProcessException("File path is empty.");
 
 			if(elem.hasAttribute("args"))setArgs(elem.getAttribute("args"));
-			else throw new ProcessException("Args empty.");
+			//	else throw new ProcessException("Args empty.");
 
 
 			if(elem.hasAttribute("in"))setInFile(Batch.lookup.get(elem.getAttribute("in")).getFilePath());
@@ -46,13 +46,30 @@ public class CmdCommand extends Command {
 
 		try 
 		{ 
-			System.out.println("Executing Command: cmd "+this.args);
-			Process p=Runtime.getRuntime().exec("cmd "+ this.args); 
+			System.out.println("Executing Command: "+ this.path );
+			StringBuffer command = new StringBuffer();
+			switch(this.path){
+			case "cmd":
+			{
+				command.append(this.args == null ? this.path  : this.path+ " " +this.args) ;
+				break;
+			}
+			case "sort" : 
+			{
+				command.append(this.path + " " + this.inFile + " "  + (this.args == null ? "" : this.args));
+				break;
+			}
+			case "java.exe" :
+			{
+				command.append("cmd /c" + this.path + " " + this.args + " testApp1.AddLines < " + this.inFile  );
+				break;					
+			}
+			}
+			System.out.println(command);
+			Process p=Runtime.getRuntime().exec(command.toString()); 
 			p.waitFor(); 
-			BufferedReader reader=new BufferedReader(
-					new InputStreamReader(p.getInputStream())
-					); 
-
+			BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
+			
 			System.out.println("Writing cmd output in the output file at the " + this.outFile );
 			FileWriter filer = new FileWriter(this.outFile);
 			PrintWriter	out = new PrintWriter(filer);

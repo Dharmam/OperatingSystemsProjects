@@ -61,9 +61,9 @@ public class BatchProcessor {
 		if (!(outID == null || outID.isEmpty())) {
 			System.out.println("outID: " + outID);
 		}
-		
+
 		System.out.println("Executing CMD .");
-		
+
 		elem.execute();
 	}
 
@@ -80,10 +80,10 @@ public class BatchProcessor {
 			Command cmd = new WDCommand();
 			cmd.parse(elem);
 			Batch.lookup.put("wd", cmd);
-			
+
 		}
 		else if ("file".equalsIgnoreCase(cmdName)) {
-			System.out.println("Setting file.");
+			System.out.println("Parsing file");
 			Command cmd = new FileCommand();
 			cmd.parse(elem);
 			Batch.lookup.put(cmd.getId(),cmd);
@@ -96,42 +96,46 @@ public class BatchProcessor {
 			parseCmd(cmd.getId());
 		}
 		//else if ("pipe".equalsIgnoreCase(cmdName)) {
-			//System.out.println("Parsing pipe");
-			//Command cmd = PipeCommand.parse(elem);
+		//System.out.println("Parsing pipe");
+		//Command cmd = PipeCommand.parse(elem);
 		//}
 		else {
 			throw new ProcessException("Unknown command " + cmdName + " from: " + elem.getBaseURI());
 		}
 	}
 
-	
+
 	public static void main(String[] args) {
 		// Main class of batch processor.
 		try {
-			String filename = null;
-			if(args.length > 0) {
-				filename = args[0];
+			//args = new String[]{"batch1.dos.xml" , "batch2.dos.xml" , "batch3.xml"}; 
+			//for (int i = 0 ; i < args.length ; i++) {
+				String filename = null;
+				if(args.length > 0) {
+					filename = args[0];
 			}
 			else {
-				filename = "C:/Users/Dharmam/Desktop/work/batch1.dos.xml";
+			filename ="C:/Users/Dharmam/git/OperatingSystemsProjects/G13_Operating_Systems_Assignment_1/batch5.broken.xml" ;
+			//+ args[i];
 			}
-			System.out.println("Opening " + filename);
-			File f = new File(filename);
+				System.out.println("Opening " + filename);
+				File f = new File(filename);
 
-			FileInputStream fis = new FileInputStream(f);
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(fis);
+				FileInputStream fis = new FileInputStream(f);
+				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+				Document doc = dBuilder.parse(fis);
 
-			Element pnode = doc.getDocumentElement();
-			NodeList nodes = pnode.getChildNodes();
-			for (int idx = 0; idx < nodes.getLength(); idx++) {
-				Node node = nodes.item(idx);
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element elem = (Element) node;
-					parseCommand(elem);
+				Element pnode = doc.getDocumentElement();
+				NodeList nodes = pnode.getChildNodes();
+				for (int idx = 0; idx < nodes.getLength(); idx++) {
+					Node node = nodes.item(idx);
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						Element elem = (Element) node;
+						parseCommand(elem);
+					}
 				}
-			}
+			
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
