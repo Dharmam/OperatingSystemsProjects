@@ -8,25 +8,27 @@ public class WDCommand extends Command  {
 	public String describe() {
 		return inFile;
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public  void parse(Element elem) throws ProcessException {
-		if(elem.getAttributes()== null ) throw new ProcessException("Empty Wd Attribute.");
+		if(!elem.hasAttributes()) throw new ProcessException("Empty Wd Attribute.");
 		else{
-			String path = elem.getAttribute("path");
-		Command.setPath(path);
-		
+			String path =  "C:/"+elem.getAttribute("path");
+			this.setFilePath(path);
+
+			String id = elem.getAttribute("id");
+			this.setId(id);
 		}
 	}
 
 	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
-	
+
+
 
 }

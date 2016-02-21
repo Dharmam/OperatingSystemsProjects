@@ -17,7 +17,7 @@ public class FileCommand extends Command{
 		else{
 			if(elem.getAttribute("path") == null) throw new ProcessException("File path is empty.");
 			else {
-				String file = elem.getAttribute("path");
+				String file = Batch.lookup.get("wd").filePath + "/"+ elem.getAttribute("path");
 				setFilePath(file);
 				String id = elem.getAttribute("id");
 				setId(id);
