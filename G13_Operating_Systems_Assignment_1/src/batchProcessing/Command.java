@@ -12,7 +12,7 @@ public abstract class Command {
 	
 	public abstract void execute() throws ProcessException;
 	
-	
+	static String path ;
 	String inFile ;
 	String outFile ;
 	String filePath ;
@@ -24,6 +24,14 @@ public abstract class Command {
 
 	public void setArgs(String args) {
 		this.args = args;
+	}
+
+	public static String getPath() {
+		return path;
+	}
+
+	public static void setPath(String path) {
+		Command.path = path;
 	}
 
 	public String getInFile() {
@@ -42,12 +50,12 @@ public abstract class Command {
 		this.outFile = outFile;
 	}
 
-	public  String getFilePath() {
+	public String getFilePath() {
 		return filePath;
 	}
 
-	public  void setFilePath(String Path) {
-		this.filePath = Path;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 	public String getId() {
