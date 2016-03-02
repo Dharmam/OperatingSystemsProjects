@@ -13,7 +13,6 @@ public class WDCommand extends Command  {
 
 	}
 
-	@Override
 	public  void parse(Element elem) throws ProcessException {
 		if(!elem.hasAttributes()) throw new ProcessException("Empty Wd Attribute.");
 		else{
