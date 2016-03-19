@@ -98,7 +98,7 @@ public class PipeCommand extends Command {
 					throw new ProcessException("Invalid CMD command.");
 				else {
 					System.out.println(this.filePath);
-					StringBuffer pipedInputStringBuffer = new StringBuffer();
+				
 					
 					com.append("cmd /c " + this.filePath + " " + this.args + " testApp1.AddLines ");
 					
